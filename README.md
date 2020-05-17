@@ -1,2 +1,3 @@
-# data-engineering-interviews
-Q&amp;A to be prepared for data engineering interviews
+# Data Engineering Interviews
+
+Data engineering interview Q&A for community by community
