@@ -2,7 +2,7 @@
 
 # data engineering interview questions
 # Dmitry Kisler © 2020-present
-# www.data-engineering-interview.org
+# wwww.data-engineering-interviews.org
 
 CONTACT=admin@dkisler.com
 
