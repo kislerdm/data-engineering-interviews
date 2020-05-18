@@ -7,3 +7,5 @@ The time complexity of such algorithm is O(n_left + n_right), where n_left = num
 references:
 - https://use-the-index-luke.com/sql/join/hash-join-partial-objects
 - https://www.youtube.com/watch?v=mlokdBiaMek
+id: "C048455B-87FC-442F-97C5-B14DF96CEFEF"
+date: "2020-05-18"

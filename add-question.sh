@@ -105,7 +105,7 @@ fi
 ofile=${DIR_QUESTIONS}/${category}/${category}_${ID}.yaml
 
 if [ ! -f ${ofile} ]; then
-	generate_template ${ofile}
+	generate_template ${ofile} ${ID} $(date +'%Y-%m-%d')
 fi
 
 # link to temp file
