@@ -7,12 +7,8 @@
 CONTACT=admin@dkisler.com
 
 DIR_BASE="$( cd "$(dirname "${0}")" >/dev/null 2>&1 ; pwd -P )"
-DIR_QUESTIONS=${DIR_BASE}/questions
+DIR_QUESTIONS=${DIR_BASE}/questions/submission
 ID=$1
-
-if [[ "$ID" == "" ]]; then
-	ID=$(uuidgen)
-fi
 
 msg () {
     echo "$(date +"%Y-%m-%d %H:%M:%S") ${1}"
@@ -33,23 +29,38 @@ print_categories() {
 generate_template() {
 
 	cat <<EOF > $1
--
- question: "YOUR QUESTION1 HERE"
- answer: "YOUR ANSWER1 HERE"
- references:
- - link1
- - link2
--
- question: "YOUR QUESTION2 HERE"
- answer: "YOUR ANSWER2 HERE"
- references:
- - link1
- - link2
+question: "YOUR QUESTION1 HERE"
+answer: "YOUR ANSWER1 HERE"
+references:
+- link1
+- link2
+id: "$2"
+date: "$3"
 EOF
 
 }
 
+link_to_file() {
+	echo "Please edit the file to add questions:"
+	echo $1
+	echo
+	echo "Don't forget to commit your questions and to open a pull request afterwards!"
+}
+
 question_categories=$(get_categories)
+
+if [[ "${ID}" == "" ]]; then
+	ID=$(uuidgen)
+else	
+	for cat in ${question_categories[@]}; do
+		ofile=$(ls ${DIR_QUESTIONS}/${cat}/*.yaml | grep ${ID})
+
+		if [[ ${ofile} != "" ]]; then
+			link_to_file ${ofile}
+			exit 0
+		fi
+	done
+fi
 
 echo "Thanks a lot for contributing to data-engineering-interview.org!"
 echo
@@ -91,12 +102,11 @@ if [[ "$?" -gt 0 ]]; then
 fi
 
 # add questions template
-ofile=${DIR_QUESTIONS}/${category}/${category}_${ID}_$(date +'%Y%m%dT%H%M%S%s').yaml
+ofile=${DIR_QUESTIONS}/${category}/${category}_${ID}.yaml
 
-generate_template ${ofile}
+if [ ! -f ${ofile} ]; then
+	generate_template ${ofile}
+fi
 
 # link to temp file
-echo "Please edit the file to add questions:"
-echo ${ofile}
-echo
-echo "Don't forget to commit your questions and to open a pull request afterwards!"
+link_to_file ${ofile}
