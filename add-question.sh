@@ -8,6 +8,11 @@ CONTACT=admin@dkisler.com
 
 DIR_BASE="$( cd "$(dirname "${0}")" >/dev/null 2>&1 ; pwd -P )"
 DIR_QUESTIONS=${DIR_BASE}/questions
+ID=$1
+
+if [[ "$ID" == "" ]]; then
+	ID=$(uuidgen)
+fi
 
 msg () {
     echo "$(date +"%Y-%m-%d %H:%M:%S") ${1}"
@@ -70,7 +75,7 @@ fi
 category=${arr[${inpt}]}
 
 # checkout new branch
-branch=${category}/$(date +'%Y%m%dT%H%M%s')
+branch=${category}/${ID}
 
 if [[ "$(git branch -v | grep "${branch}")" == "" ]]; then
 	git checkout -b ${branch}
@@ -86,7 +91,7 @@ if [[ "$?" -gt 0 ]]; then
 fi
 
 # add questions template
-ofile=${DIR_QUESTIONS}/${category}/${category}-$(date +'%Y%m%dT%H%M%S%s').yaml
+ofile=${DIR_QUESTIONS}/${category}/${category}_${ID}_$(date +'%Y%m%dT%H%M%S%s').yaml
 
 generate_template ${ofile}
 
