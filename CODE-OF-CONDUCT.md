@@ -1,5 +1,7 @@
-# Code of Conduct - Data Engineering Interviews
-
+---
+title: Code of Conduct
+wight: 1
+---
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our
