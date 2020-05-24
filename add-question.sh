@@ -7,7 +7,7 @@
 CONTACT=admin@dkisler.com
 
 DIR_BASE="$( cd "$(dirname "${0}")" >/dev/null 2>&1 ; pwd -P )"
-DIR_QUESTIONS=${DIR_BASE}/questions/submission
+DIR_QUESTIONS=${DIR_BASE}/questions
 ID=$1
 
 msg () {
@@ -31,11 +31,15 @@ generate_template() {
 	cat <<EOF > $1
 question: "YOUR QUESTION1 HERE"
 answer: "YOUR ANSWER1 HERE"
+level: "YOUR QUESTION COMPLEXITY LEVEL: 1 (easy) 2 (medium) 3 (expert) - select int value!"
 references:
 - link1
 - link2
 id: "$2"
 date: "$3"
+figure:
+- "(optional, if you use figures in your answer) NAME OF FIGURE1 YOU NEED TO USE PLACED IN 'img' DIRECTORY"
+- "(optional, if you use figures in your answer) NAME OF FIGURE2 YOU NEED TO USE PLACED IN 'img' DIRECTORY"
 EOF
 
 }
@@ -88,18 +92,18 @@ category=${arr[${inpt}]}
 # checkout new branch
 branch=${category}/${ID}
 
-if [[ "$(git branch -v | grep "${branch}")" == "" ]]; then
-	git checkout -b ${branch}
-else
-	git checkout ${branch}
-fi
+# if [[ "$(git branch -v | grep "${branch}")" == "" ]]; then
+# 	git checkout -b ${branch}
+# else
+# 	git checkout ${branch}
+# fi
 
-if [[ "$?" -gt 0 ]]; then
-	echo "Git checkout error"
-	git checkout master
-	git branch -d ${branch}
-	exit $?
-fi
+# if [[ "$?" -gt 0 ]]; then
+# 	echo "Git checkout error"
+# 	git checkout master
+# 	git branch -d ${branch}
+# 	exit $?
+# fi
 
 # add questions template
 ofile=${DIR_QUESTIONS}/${category}/${category}_${ID}.yaml
