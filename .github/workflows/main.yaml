@@ -14,26 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Build & deploy content
-        
+      - name: Checkout repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 2
           submodules: 'recursive'
-
+        
+      - name: "Generate content"
         shell: bash
         run: |
           echo "Generate content"
           source .env
           ./build.run
-          
-          echo "Install hugo"
-          apt-get undate -y
-          apt-get install wget -y
-          wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
-          dpkg -i /tmp/hugo.deb
-          
-          echo "Prepare gh-pages branch"
+        
+      - name: "Prepare gh-pages branch"
+        shell: bash
+        run: |                
           cd website
           mkdir public
           git worktree prune
@@ -42,15 +38,30 @@ jobs:
           git worktree add -B gh-pages public origin/gh-pages
           echo "Removing existing files"
           rm -rf public/*
-          
-          echo "Build static pages"
-          hugo -s website/hugo
 
-          echo "Remove md files"
+      - name: "Install hudo"
+        shell: bash
+        run: |                
+          echo "Install hugo"
+          apt-get undate -y
+          apt-get install wget -y
+          wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
+          dpkg -i /tmp/hugo.deb
+          
+      - name: "Build static pages"
+        shell: bash
+        run: |
+          hugo -s website/hugo
+      
+      - name: "Remove md files"
+        shell: bash
+        run: |
           rm -rf website/content
           rm -rf website/static/img
 
-          echo "Commit static pages to gh-pages"
+      - name: "Commit static pages to gh-pages"
+        shell: bash
+        run: |
           cd website/public
           git add --all && git commit -m "Publish to gh-pages"
           git push origin gh-pages
