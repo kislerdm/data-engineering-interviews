@@ -7,3 +7,5 @@ export DIR_SITE_CONTENT=${DIR}/website/content
 
 export DIR_SOURCE_IMG=${DIR}/img
 export DIR_DESTINATION_IMG=${DIR}/website/static/img
+
+export PATH_COC=${DIR}/code-of-conduct.md

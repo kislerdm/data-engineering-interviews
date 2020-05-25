@@ -67,6 +67,11 @@ func main() {
 	if dirDestinationImg == "" {
 		dirDestinationImg = path.Join(dir, "website/static/img")
 	}
+	// path to code of conduct
+	pathCoc := os.Getenv("PATH_COC")
+	if pathCoc == "" {
+		pathCoc = path.Join(dir, "code-of-conduct.md")
+	}
 
 	pageLPTemplate, err := defineLandingPage()
 	if err != nil {
@@ -125,7 +130,7 @@ func main() {
 				log.Fatalf("Cannot parse yaml from the file %s\ncontent:\n%s\nerror: %v", pathFile, string(yamlBytes), err)
 			}
 
-			// link images
+			// copy required image
 			if len(questionContent.Figures) > 0 {
 				for _, img := range questionContent.Figures {
 					source := fmt.Sprintf("%s/%s", dirSourceImg, img)
@@ -149,13 +154,39 @@ func main() {
 		siteStats.CntQuestions += len(questions)
 	}
 
+	// save questions landing page
 	err = writePage(pageLPQuestionsTemplate, fmt.Sprintf("%s/questions/_index.md", dirSiteContent), questionCategories)
 	if err != nil {
 		log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/_index.md", dirSiteContent), err)
 	}
 
+	// save main landing page
 	err = writePage(pageLPTemplate, fmt.Sprintf("%s/_index.md", dirSiteContent), siteStats)
 	if err != nil {
 		log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/_index.md", dirSiteContent), err)
 	}
+
+	// prepare and save code of conduct page
+	CocBytes, err := ioutil.ReadFile(pathCoc)
+	if err != nil {
+		log.Fatalf("Cannot read file %s: %v", pathCoc, err)
+	}
+
+	CocText := fmt.Sprintf(`---
+title: Code of Conduct
+weight: 1
+---
+
+%s`, string(CocBytes))
+
+	CocFile, err := fileCreate(fmt.Sprintf("%s/code-of-conduct/_index.md", dirSiteContent))
+	if err != nil {
+		log.Fatalf("Cannot write to file %s: %v", fmt.Sprintf("%s/code-of-conduct/_index.md", dirSiteContent), err)
+	}
+
+	_, err = CocFile.WriteString(CocText)
+	if err != nil {
+		log.Fatalf("Cannot write to file %s: %v", fmt.Sprintf("%s/code-of-conduct/_index.md", dirSiteContent), err)
+	}
+
 }

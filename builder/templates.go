@@ -33,7 +33,7 @@ type QuestionContent struct {
 	Figures    []string `yaml:"figure,omitempty"`
 }
 
-// defineQuestionsPageTemplate func to compile a page of questions
+// defineQuestionsPageTemplate function to compile a page of questions
 func defineQuestionsPageTemplate() (*template.Template, error) {
 	TemplatePage := `---
 title: <<.Category>>
@@ -74,7 +74,7 @@ type QuestionsCategories struct {
 	Categories []string
 }
 
-// defineLPQuestionsPageTemplate func to compile a "LP" for questions pages
+// defineLPQuestionsPageTemplate function to compile a "LP" for questions pages
 func defineLPQuestionsPageTemplate() (*template.Template, error) {
 	TemplatePage := `---
 title: Questions
@@ -96,6 +96,7 @@ type SiteStats struct {
 	Date         string
 }
 
+// defineLandingPage function to compile landing page
 func defineLandingPage() (*template.Template, error) {
 	TemplatePage := `# Data Engineering Interviews
 
@@ -114,7 +115,7 @@ It is fully community driven project - **your contribution matters**:
 
 For updates, join our <a href="https://join.slack.com/t/dataengineeri-dg22406/shared_invite/zt-eeydzktu-uJ2mc4a45OrtzDMqekiqDQ" target="_blank">slack workspace</a> and follow me on LinkedIn (<a href="https://www.linkedin.com/in/dkisler/" target="_blank">dkisler</a>).
 
-*Respect your peers and follow our [code of conduct](code-of-conduct.md)*
+*Respect your peers and follow our [code of conduct](code-of-conduct)*
 
 <a href="https://github.com/kislerdm/data-engineering-interviews/contributors" target="_blank">List of contributors</a>
 `
