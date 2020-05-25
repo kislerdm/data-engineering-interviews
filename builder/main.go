@@ -13,12 +13,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// errorLog logging function
-func errorLog(msg string) {
-	log.Fatalln(msg)
-	os.Exit(1)
-}
-
 // fileCreate function to open a new file
 func fileCreate(path string) (*os.File, error) {
 
@@ -28,7 +22,7 @@ func fileCreate(path string) (*os.File, error) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err := os.MkdirAll(dir, 0777)
 		if err != nil {
-			errorLog(fmt.Sprintf("Cannot create dir %s\nerror: %v", dir, err))
+			log.Fatalf("Cannot create dir %s\nerror: %v", dir, err)
 		}
 	}
 
@@ -50,7 +44,6 @@ func writePage(template *template.Template, path string, obj interface{}) error 
 }
 
 func main() {
-
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 
 	// read env vars
@@ -77,28 +70,26 @@ func main() {
 
 	pageLPTemplate, err := defineLandingPage()
 	if err != nil {
-		errorLog(fmt.Sprintf("Cannot instantiate landing page template: %v", err))
+		log.Fatalf("Cannot instantiate landing page template: %v", err)
 	}
 
 	pageQuestionsTemplate, err := defineQuestionsPageTemplate()
 	if err != nil {
-		errorLog(fmt.Sprintf("Cannot instantiate output questions page template: %v", err))
+		log.Fatalf("Cannot instantiate output questions page template: %v", err)
 	}
 
 	pageLPQuestionsTemplate, err := defineLPQuestionsPageTemplate()
 	if err != nil {
-		errorLog(fmt.Sprintf("Cannot instantiate output LP questions page template: %v", err))
+		log.Fatalf("Cannot instantiate output LP questions page template: %v", err)
 	}
 
 	// scan questions directory
 	dirCategories, err := ioutil.ReadDir(dirSourceQuestions)
 	if err != nil {
-		errorLog(fmt.Sprintf("Cannot list %s: %v", dirSourceQuestions, err))
+		log.Fatalf("Cannot list %s: %v", dirSourceQuestions, err)
 	}
 
-	var questionContent QuestionContent
 	var questionCategories QuestionsCategories
-
 	var siteStats SiteStats
 	siteStats.Date = time.Now().UTC().Format("2006-01-02")
 
@@ -108,7 +99,7 @@ func main() {
 
 		listFiles, err := ioutil.ReadDir(dirCategory)
 		if err != nil {
-			errorLog(fmt.Sprintf("Cannot read dir %s: %v", dirCategory, err))
+			log.Fatalf("Cannot read dir %s: %v", dirCategory, err)
 		}
 
 		if len(listFiles) == 0 {
@@ -124,12 +115,14 @@ func main() {
 
 			yamlBytes, err := ioutil.ReadFile(pathFile)
 			if err != nil {
-				errorLog(fmt.Sprintf("Cannot read file %s: %v", pathFile, err))
+				log.Fatalf("Cannot read file %s: %v", pathFile, err)
 			}
+
+			var questionContent QuestionContent
 
 			err = yaml.Unmarshal(yamlBytes, &questionContent)
 			if err != nil {
-				errorLog(fmt.Sprintf("Cannot parse yaml from the file %s\ncontent:\n%s\nerror: %v", pathFile, string(yamlBytes), err))
+				log.Fatalf("Cannot parse yaml from the file %s\ncontent:\n%s\nerror: %v", pathFile, string(yamlBytes), err)
 			}
 
 			// link images
@@ -140,7 +133,7 @@ func main() {
 
 					err := os.Link(source, destination)
 					if err != nil {
-						log.Println("Cannot move from %s to %s", source, destination)
+						log.Printf("Cannot move from %s to %s: %s", source, destination, err)
 					}
 				}
 			}
@@ -150,7 +143,7 @@ func main() {
 
 		err = writePage(pageQuestionsTemplate, fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), Questions{catName, questions})
 		if err != nil {
-			errorLog(fmt.Sprintf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), err))
+			log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), err)
 		}
 
 		siteStats.CntQuestions += len(questions)
@@ -158,11 +151,11 @@ func main() {
 
 	err = writePage(pageLPQuestionsTemplate, fmt.Sprintf("%s/questions/_index.md", dirSiteContent), questionCategories)
 	if err != nil {
-		errorLog(fmt.Sprintf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/_index.md", dirSiteContent), err))
+		log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/_index.md", dirSiteContent), err)
 	}
 
 	err = writePage(pageLPTemplate, fmt.Sprintf("%s/_index.md", dirSiteContent), siteStats)
 	if err != nil {
-		errorLog(fmt.Sprintf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/_index.md", dirSiteContent), err))
+		log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/_index.md", dirSiteContent), err)
 	}
 }
