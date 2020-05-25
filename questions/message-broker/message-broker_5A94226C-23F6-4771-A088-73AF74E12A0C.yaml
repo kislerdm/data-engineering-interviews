@@ -1,0 +1,13 @@
+question: "YOUR QUESTION1 HERE"
+answer: "YOUR ANSWER1 HERE
+
+![Figure](/img/1200px-Apache_kafka-icon.svg.png)
+"
+level: 2
+references:
+- link1
+- link2
+id: "5A94226C-23F6-4771-A088-73AF74E12A0C"
+date: "2020-05-25"
+figure:
+- "1200px-Apache_kafka-icon.svg.png"

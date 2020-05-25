@@ -1,5 +1,6 @@
 question: "What is 'nested loops join'?"
 answer: "It's a basic approach databse engine takes to join two tables: for every value (external loop) of the 'left' table's join key column, the engine loops (inner loop) over the values of the 'right' table's join key column and selects the matching rows. This approach is basic and has the time complexity of O(n**2)."
+level: 1
 references:
 - https://use-the-index-luke.com/sql/join/nested-loops-join-n1-problem
 - https://www.youtube.com/watch?v=WfuLUE7lccs
