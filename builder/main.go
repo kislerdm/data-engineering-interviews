@@ -2,21 +2,25 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
 
+// errorLog logging function
 func errorLog(msg string) {
 	log.Fatalln(msg)
 	os.Exit(1)
 }
 
-func fileCreate(path string) *os.File {
+// fileCreate function to open a new file
+func fileCreate(path string) (*os.File, error) {
 
 	dir := filepath.Dir(path)
 
@@ -28,42 +32,52 @@ func fileCreate(path string) *os.File {
 		}
 	}
 
-	// open file
-	f, err := os.Create(path)
+	return os.Create(path)
+}
+
+// writePage function to execute and write template as md file on disk
+func writePage(template *template.Template, path string, obj interface{}) error {
+	fOut, err := fileCreate(path)
 	if err != nil {
-		errorLog(fmt.Sprintf("Cannot open file %s\nerror: %v", f.Name(), err))
+		return err
 	}
 
-	return f
+	err = template.Execute(fOut, obj)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func main() {
 
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 
+	// read env vars
+	// dir with questions yaml files
 	dirSourceQuestions := os.Getenv("DIR_SOURCE_QUESTIONS")
 	if dirSourceQuestions == "" {
-		dirSourceQuestions = path.Join(dir, "../../questions/submission")
+		dirSourceQuestions = path.Join(dir, "questions")
 	}
-
-	dirDestinationQuestions := os.Getenv("DIR_DESTINATION_QUESTIONS")
-	if dirDestinationQuestions == "" {
-		dirDestinationQuestions = path.Join(dir, "../website/content/questions")
+	// dir to store website content
+	dirSiteContent := os.Getenv("DIR_SITE_CONTENT")
+	if dirSiteContent == "" {
+		dirSiteContent = path.Join(dir, "website/content")
 	}
-
+	// dir containing images used as illustrations
 	dirSourceImg := os.Getenv("DIR_SOURCE_IMG")
 	if dirSourceImg == "" {
-		dirSourceImg = path.Join(dir, "../../questions/img")
+		dirSourceImg = path.Join(dir, "img")
 	}
-
+	// dir to storage images for website
 	dirDestinationImg := os.Getenv("DIR_DESTINATION_IMG")
 	if dirDestinationImg == "" {
-		dirDestinationImg = path.Join(dir, "../website/static/img")
+		dirDestinationImg = path.Join(dir, "website/static/img")
 	}
 
-	dirCategories, err := ioutil.ReadDir(dirSourceQuestions)
+	pageLPTemplate, err := defineLandingPage()
 	if err != nil {
-		errorLog(fmt.Sprintf("Cannot list %s: %v", dirSourceQuestions, err))
+		errorLog(fmt.Sprintf("Cannot instantiate landing page template: %v", err))
 	}
 
 	pageQuestionsTemplate, err := defineQuestionsPageTemplate()
@@ -76,25 +90,23 @@ func main() {
 		errorLog(fmt.Sprintf("Cannot instantiate output LP questions page template: %v", err))
 	}
 
-	var dirCategory string
-	var catName string
-	var listFiles []os.FileInfo
-	var pathFile string
-
-	var yamlBytes []byte
+	// scan questions directory
+	dirCategories, err := ioutil.ReadDir(dirSourceQuestions)
+	if err != nil {
+		errorLog(fmt.Sprintf("Cannot list %s: %v", dirSourceQuestions, err))
+	}
 
 	var questionContent QuestionContent
-	var questions []QuestionContent
 	var questionCategories QuestionsCategories
 
-	var fOut *os.File
+	var siteStats SiteStats
+	siteStats.Date = time.Now().UTC().Format("2006-01-02")
 
 	for _, category := range dirCategories {
-		catName = category.Name()
+		catName := category.Name()
+		dirCategory := fmt.Sprintf("%s/%s", dirSourceQuestions, catName)
 
-		dirCategory = fmt.Sprintf("%s/%s", dirSourceQuestions, catName)
-
-		listFiles, err = ioutil.ReadDir(dirCategory)
+		listFiles, err := ioutil.ReadDir(dirCategory)
 		if err != nil {
 			errorLog(fmt.Sprintf("Cannot read dir %s: %v", dirCategory, err))
 		}
@@ -105,10 +117,12 @@ func main() {
 
 		questionCategories.Categories = append(questionCategories.Categories, catName)
 
-		for _, file := range listFiles {
-			pathFile = fmt.Sprintf("%s/%s", dirCategory, file.Name())
+		var questions []QuestionContent
 
-			yamlBytes, err = ioutil.ReadFile(pathFile)
+		for _, file := range listFiles {
+			pathFile := fmt.Sprintf("%s/%s", dirCategory, file.Name())
+
+			yamlBytes, err := ioutil.ReadFile(pathFile)
 			if err != nil {
 				errorLog(fmt.Sprintf("Cannot read file %s: %v", pathFile, err))
 			}
@@ -118,27 +132,37 @@ func main() {
 				errorLog(fmt.Sprintf("Cannot parse yaml from the file %s\ncontent:\n%s\nerror: %v", pathFile, string(yamlBytes), err))
 			}
 
+			// link images
+			if len(questionContent.Figures) > 0 {
+				for _, img := range questionContent.Figures {
+					source := fmt.Sprintf("%s/%s", dirSourceImg, img)
+					destination := fmt.Sprintf("%s/%s", dirDestinationImg, img)
+
+					err := os.Link(source, destination)
+					if err != nil {
+						log.Println("Cannot move from %s to %s", source, destination)
+					}
+				}
+			}
+
 			questions = append(questions, questionContent)
 		}
 
-		// open file
-		fOut = fileCreate(fmt.Sprintf("%s/%s/_index.md", dirDestinationQuestions, catName))
-
-		// write page md to the file
-		err = pageQuestionsTemplate.Execute(fOut, Questions{catName, questions})
+		err = writePage(pageQuestionsTemplate, fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), Questions{catName, questions})
 		if err != nil {
-			errorLog(fmt.Sprintf("Cannot save page md to %s\nerror: %v", fOut.Name(), err))
+			errorLog(fmt.Sprintf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), err))
 		}
 
+		siteStats.CntQuestions += len(questions)
 	}
 
-	// open file
-	fOut = fileCreate(fmt.Sprintf("%s/_index.md", dirDestinationQuestions))
-
-	// write LP page md to the file
-	err = pageLPQuestionsTemplate.Execute(fOut, questionCategories)
+	err = writePage(pageLPQuestionsTemplate, fmt.Sprintf("%s/questions/_index.md", dirSiteContent), questionCategories)
 	if err != nil {
-		errorLog(fmt.Sprintf("Cannot save page md to %s\nerror: %v", fOut.Name(), err))
+		errorLog(fmt.Sprintf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/_index.md", dirSiteContent), err))
 	}
 
+	err = writePage(pageLPTemplate, fmt.Sprintf("%s/_index.md", dirSiteContent), siteStats)
+	if err != nil {
+		errorLog(fmt.Sprintf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/_index.md", dirSiteContent), err))
+	}
 }
