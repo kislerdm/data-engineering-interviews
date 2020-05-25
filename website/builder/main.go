@@ -13,19 +13,21 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// createDir function to execute 'mkdir -p ..'
+func createDir(path string) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err := os.MkdirAll(path, 0777)
+		return err
+	}
+	return nil
+}
+
 // fileCreate function to open a new file
 func fileCreate(path string) (*os.File, error) {
-
-	dir := filepath.Dir(path)
-
-	// check if output file exists
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err := os.MkdirAll(dir, 0777)
-		if err != nil {
-			log.Fatalf("Cannot create dir %s\nerror: %v", dir, err)
-		}
+	err := createDir(filepath.Dir(path))
+	if err != nil {
+		return nil, err
 	}
-
 	return os.Create(path)
 }
 
@@ -127,7 +129,7 @@ func main() {
 
 			err = yaml.Unmarshal(yamlBytes, &questionContent)
 			if err != nil {
-				log.Fatalf("Cannot parse yaml from the file %s\ncontent:\n%s\nerror: %v", pathFile, string(yamlBytes), err)
+				log.Fatalf("Cannot parse yaml from the file %s: %v\ncontent: %s", pathFile, err, string(yamlBytes))
 			}
 
 			// copy required image
@@ -136,7 +138,17 @@ func main() {
 					source := fmt.Sprintf("%s/%s", dirSourceImg, img)
 					destination := fmt.Sprintf("%s/%s", dirDestinationImg, img)
 
-					err := os.Link(source, destination)
+					err := createDir(filepath.Dir(destination))
+					if err != nil {
+						log.Printf("Cannot create img dir %s: %s", filepath.Dir(destination), err)
+						break
+					}
+
+					if _, err := os.Stat(destination); err == nil {
+						os.Remove(destination)
+					}
+
+					err = os.Link(source, destination)
 					if err != nil {
 						log.Printf("Cannot move from %s to %s: %s", source, destination, err)
 					}
@@ -148,7 +160,7 @@ func main() {
 
 		err = writePage(pageQuestionsTemplate, fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), Questions{catName, questions})
 		if err != nil {
-			log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), err)
+			log.Fatalf("Error saving md to %s: %v", fmt.Sprintf("%s/questions/%s/_index.md", dirSiteContent, catName), err)
 		}
 
 		siteStats.CntQuestions += len(questions)
@@ -157,13 +169,13 @@ func main() {
 	// save questions landing page
 	err = writePage(pageLPQuestionsTemplate, fmt.Sprintf("%s/questions/_index.md", dirSiteContent), questionCategories)
 	if err != nil {
-		log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/questions/_index.md", dirSiteContent), err)
+		log.Fatalf("Error saving md to %s: %v", fmt.Sprintf("%s/questions/_index.md", dirSiteContent), err)
 	}
 
 	// save main landing page
 	err = writePage(pageLPTemplate, fmt.Sprintf("%s/_index.md", dirSiteContent), siteStats)
 	if err != nil {
-		log.Fatalf("Error saving md to %s\nerror: %v", fmt.Sprintf("%s/_index.md", dirSiteContent), err)
+		log.Fatalf("Error saving md to %s: %v", fmt.Sprintf("%s/_index.md", dirSiteContent), err)
 	}
 
 	// prepare and save code of conduct page

@@ -3,6 +3,8 @@ languageCode: "en-us"
 DefaultContentLanguage: "en"
 title: "Data Engineering Interviews"
 
+contentDir: ./../content
+staticDir: ./../static
 publishDir: ./../public
 
 build:
