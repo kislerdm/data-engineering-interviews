@@ -18,52 +18,58 @@ jobs:
     if: github.actor == github.event.repository.owner.login
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-          submodules: 'recursive'
-        
-      - name: "Generate content"
-        shell: bash
-        run: |
-          source .env
-          ./build.run
-        
-      - name: "Prepare gh-pages branch"
-        shell: bash
-        run: |                
-          cd website
-          mkdir public
-          git worktree prune
-          rm -rf .git/worktrees/public
-          echo "Checking out gh-pages branch into public"
-          git worktree add -B gh-pages public
-          echo "Removing existing files"
-          rm -rf public/*
-
       - name: "Install hudo"
         shell: bash
         run: |
-          apt-get update -y
           apt-get install wget -y
           wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
           dpkg -i /tmp/hugo.deb
-          
-      - name: "Build static pages"
-        shell: bash
-        run: |
-          hugo -s website/hugo
-      
-      # - name: "Remove md files"
+
+      # - name: Checkout repo
+      #   uses: actions/checkout@v2
+      #   with:
+      #     fetch-depth: 2
+      #     submodules: 'recursive'
+        
+      # - name: "Generate content"
       #   shell: bash
       #   run: |
-      #     rm -rf website/content
-      #     rm -rf website/static/img
+      #     source .env
+      #     ./build.run
+        
+      # - name: "Prepare gh-pages branch"
+      #   shell: bash
+      #   run: |                
+      #     cd website
+      #     mkdir public
+      #     git worktree prune
+      #     rm -rf .git/worktrees/public
+      #     echo "Checking out gh-pages branch into public"
+      #     git worktree add -B gh-pages public
+      #     echo "Removing existing files"
+      #     rm -rf public/*
 
-      - name: "Commit static pages to gh-pages"
-        shell: bash
-        run: |
-          cd website/public
-          git add --all && git commit -m "Publish to gh-pages"
-          git push origin gh-pages
+      # - name: "Install hudo"
+      #   shell: bash
+      #   run: |
+      #     apt-get install wget -y
+      #     wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
+      #     dpkg -i /tmp/hugo.deb
+          
+      # - name: "Build static pages"
+      #   shell: bash
+      #   run: |
+      #     hugo -s website/hugo
+      
+      # # - name: "Remove md files"
+      # #   shell: bash
+      # #   run: |
+      # #     rm -rf website/content
+      # #     rm -rf website/static/img
+
+      # - name: "Commit static pages to gh-pages"
+      #   shell: bash
+      #   run: |
+      #     cd website/public
+      #     git add --all && git commit -m "Publish to gh-pages"
+      #     git push origin gh-pages
