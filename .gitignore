@@ -1,4 +1,6 @@
-website/hugo_stats.json
 .DS_Store
+
+website/hugo/hugo_stats.json
+website/hugo/resources/_gen
+
 public
-website/resources/_gen
