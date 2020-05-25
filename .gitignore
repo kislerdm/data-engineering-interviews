@@ -1,3 +1,5 @@
 website/hugo_stats.json
 website/themes
 .DS_Store
+public
+resources/_gen
