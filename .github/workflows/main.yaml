@@ -68,3 +68,4 @@ jobs:
           github_token: ${{ secrets.TOKEN }}
           branch: gh-pages
           directory: website/public
+          force: true
