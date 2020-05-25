@@ -38,8 +38,8 @@ references:
 id: "$2"
 date: "$3"
 figure:
-- "(optional, if you use figures in your answer) NAME OF FIGURE1 YOU NEED TO USE PLACED IN 'img' DIRECTORY"
-- "(optional, if you use figures in your answer) NAME OF FIGURE2 YOU NEED TO USE PLACED IN 'img' DIRECTORY"
+- "(optional, if you use figures in your answer) NAME OF FIGURE1 YOU NEED TO USE PLACED TO 'img' DIRECTORY"
+- "(optional, if you use figures in your answer) NAME OF FIGURE2 YOU NEED TO USE PLACED TO 'img' DIRECTORY"
 EOF
 
 }
@@ -92,24 +92,24 @@ category=${arr[${inpt}]}
 # checkout new branch
 branch=${category}/${ID}
 
-# if [[ "$(git branch -v | grep "${branch}")" == "" ]]; then
-# 	git checkout -b ${branch}
-# else
-# 	git checkout ${branch}
-# fi
+if [[ "$(git branch -v | grep "${branch}")" == "" ]]; then
+	git checkout -b ${branch}
+else
+	git checkout ${branch}
+fi
 
-# if [[ "$?" -gt 0 ]]; then
-# 	echo "Git checkout error"
-# 	git checkout master
-# 	git branch -d ${branch}
-# 	exit $?
-# fi
+if [[ "$?" -gt 0 ]]; then
+	echo "Git checkout error"
+	git checkout master
+	git branch -d ${branch}
+	exit $?
+fi
 
 # add questions template
 ofile=${DIR_QUESTIONS}/${category}/${category}_${ID}.yaml
 
 if [ ! -f ${ofile} ]; then
-	generate_template ${ofile} ${ID} $(date +'%Y-%m-%d')
+	generate_template ${ofile} ${ID} $(date -u +'%Y-%m-%d')
 fi
 
 # link to temp file
