@@ -1,8 +1,6 @@
 name: deploy website
 
 on: 
-  watch:
-    types: [started]
   pull_request:
     branches:
         - master
@@ -10,9 +8,12 @@ on:
       - questions/**/*.yaml
       - img/**
   
+  watch:
+    types: [started]
+  
 jobs:
   compile-n-deploy:
-    name: Generate web pages content as md files
+    name: Deploy website
     runs-on: ubuntu-latest
     
     if: github.actor == github.event.repository.owner.login
@@ -33,14 +34,13 @@ jobs:
       - name: "Prepare gh-pages branch"
         shell: bash
         run: |                
-          cd website
-          mkdir public
+          mkdir website/public
           git worktree prune
           rm -rf .git/worktrees/public
           echo "Checking out gh-pages branch into public"
-          git worktree add -B gh-pages public
+          git worktree add -B gh-pages website/public origin/gh-pages
           echo "Removing existing files"
-          rm -rf public/*
+          rm -rf website/public/*
 
       - name: "Install hudo"
         shell: bash
