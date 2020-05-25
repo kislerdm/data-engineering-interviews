@@ -14,23 +14,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Build content
+      - name: Build & deploy content
+        
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+          submodules: 'recursive'
+
         shell: bash
         run: |
+          echo "Generate content"
           source .env
           ./build.run
-      
-      - name: Install hugo
-        shell: bash
-        run: |
+          
+          echo "Install hugo"
           apt-get undate -y
           apt-get install wget -y
           wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
           dpkg -i /tmp/hugo.deb
-
-      - name: Prepare git gh-pages worktree
-        shell: bash
-        run: |
+          
+          echo "Prepare gh-pages branch"
           cd website
           mkdir public
           git worktree prune
@@ -39,20 +42,15 @@ jobs:
           git worktree add -B gh-pages public origin/gh-pages
           echo "Removing existing files"
           rm -rf public/*
+          
+          echo "Build static pages"
+          hugo -s website/hugo
 
-      - name: Generate static pages
-        shell: bash
-        run: hugo -s website/hugo
-      
-      - name: Remove hugo input
-        shell: bash
-        run: |
+          echo "Remove md files"
           rm -rf website/content
           rm -rf website/static/img
 
-      - name: Commit static pages to gh-pages
-        shell: bash
-        run: |
+          echo "Commit static pages to gh-pages"
           cd website/public
           git add --all && git commit -m "Publish to gh-pages"
           git push origin gh-pages
