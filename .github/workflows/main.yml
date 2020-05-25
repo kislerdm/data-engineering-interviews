@@ -1,0 +1,58 @@
+name: deploy website
+
+on: 
+  pull_request:
+    branches:
+        - master
+    paths:
+      - questions/**/*.yaml
+      - img/**
+  
+jobs:
+  compile-n-deploy:
+    name: Generate web pages content as md files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Build content
+        shell: bash
+        run: |
+          source .env
+          ./build.run
+      
+      - name: Install hugo
+        shell: bash
+        run: |
+          apt-get undate -y
+          apt-get install wget -y
+          wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
+          dpkg -i /tmp/hugo.deb
+
+      - name: Prepare git gh-pages worktree
+        shell: bash
+        run: |
+          cd website
+          mkdir public
+          git worktree prune
+          rm -rf .git/worktrees/public
+          echo "Checking out gh-pages branch into public"
+          git worktree add -B gh-pages public origin/gh-pages
+          echo "Removing existing files"
+          rm -rf public/*
+
+      - name: Generate static pages
+        shell: bash
+        run: hugo -s website/hugo
+      
+      - name: Remove hugo input
+        shell: bash
+        run: |
+          rm -rf website/content
+          rm -rf website/static/img
+
+      - name: Commit static pages to gh-pages
+        shell: bash
+        run: |
+          cd website/public
+          git add --all && git commit -m "Publish to gh-pages"
+          git push origin gh-pages
