@@ -38,8 +38,8 @@ jobs:
           git worktree prune
           rm -rf .git/worktrees/public
           echo "Checking out gh-pages branch into public"
-          git remote add origin ${{ github.repository }}
-          git worktree add -B gh-pages website/public origin/gh-pages
+          git remote add upstream ${{ github.repository }}
+          git worktree add -B gh-pages website/public upstream/gh-pages
           echo "Removing existing files"
           rm -rf website/public/*
 
