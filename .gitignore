@@ -1,7 +1,6 @@
 .DS_Store
 
 website/hugo/hugo_stats.json
-website/hugo/resources/_gen
 website/content
 website/static/img
 
