@@ -1,7 +1,9 @@
-baseURL: "http://data-engineering-interviews.org/"
+baseURL: "https://data-engineering-interviews.org/"
 languageCode: "en-us"
 DefaultContentLanguage: "en"
 title: "Data Engineering Interviews"
+
+publishDir: ./../public
 
 build:
   useResourceCacheWhen: fallback
