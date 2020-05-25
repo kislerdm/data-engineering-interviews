@@ -1,0 +1,25 @@
+<head>
+
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="canonical" href="{{ .Permalink }}">
+
+    <title>
+        {{ block "title" . }}
+        {{ .Title}}{{ if ne .Title .Site.Title }} | {{ .Site.Title }}{{ end }}
+        {{ end }}
+    </title>
+
+    <!-- Load stylesheet -->
+    <link href="{{ .Site.BaseURL }}css/fontawesome.min.css" rel="stylesheet">
+
+    {{ $style := resources.Get "css/ace.scss" | toCSS | minify }}
+    <link rel="stylesheet" href="{{ $style.Permalink }}">
+
+    <!-- Only include the tracking when using `hugo` or adding `--environment production` -->
+    {{ if eq hugo.Environment "production" }}
+        {{ template "_internal/google_analytics_async.html" . }}
+    {{ end }}
+
+</head>
