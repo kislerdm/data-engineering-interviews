@@ -1,7 +1,3 @@
----
-title: Code of Conduct
-weight: 1
----
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our
