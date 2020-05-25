@@ -174,7 +174,7 @@ func main() {
 
 	CocText := fmt.Sprintf(`---
 title: Code of Conduct
-weight: 1
+weight: 3
 ---
 
 %s`, string(CocBytes))
