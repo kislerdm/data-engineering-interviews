@@ -21,9 +21,10 @@ jobs:
       - name: "Install hudo"
         shell: bash
         run: |
-          apt-get install hugo -y
-      # wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
-      # sudo dpkg -i /tmp/hugo.deb
+          sudo apt-get update -y
+          sudo apt-get install wget -y
+          wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
+          sudo dpkg -i /tmp/hugo.deb
 
       # - name: Checkout repo
       #   uses: actions/checkout@v2
