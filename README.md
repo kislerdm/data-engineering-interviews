@@ -15,6 +15,6 @@ It is fully community driven project - **your contribution matters**:
 
 For updates, join our <a href="https://join.slack.com/t/dataengineeri-dg22406/shared_invite/zt-eeydzktu-uJ2mc4a45OrtzDMqekiqDQ" target="_blank">slack workspace</a> and follow me on LinkedIn (<a href="https://www.linkedin.com/in/dkisler/" target="_blank">dkisler</a>).
 
-*Respect your peers and follow our [code of conduct](code-of-conduct.md)*
+*Respect your peers and follow our [code of conduct](CODE-OF-CONDUCT.md)*
 
 <a href="https://github.com/kislerdm/data-engineering-interviews/contributors" target="_blank">List of contributors</a>

@@ -70,7 +70,7 @@ func main() {
 	// path to code of conduct
 	pathCoc := os.Getenv("PATH_COC")
 	if pathCoc == "" {
-		pathCoc = path.Join(dir, "code-of-conduct.md")
+		pathCoc = path.Join(dir, "CODE-OF-CONDUCT.md")
 	}
 
 	pageLPTemplate, err := defineLandingPage()
