@@ -39,8 +39,6 @@ jobs:
           rm -rf .git/worktrees/public
           echo "Checking out gh-pages branch into public"
           git worktree add -B gh-pages website/public
-          echo "Removing existing files"
-          rm -rf website/public/*
 
       - name: "Install hudo"
         shell: bash
@@ -58,6 +56,15 @@ jobs:
       - name: "Commit static pages to gh-pages"
         shell: bash
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           cd website/public
-          git add --all && git commit -m "Publish to gh-pages"
-          git push origin gh-pages
+          git add --all
+          git commit -m "Publish to gh-pages"
+
+      - name: "Push changes"
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          branch: gh-pages
+          directory: website/public
