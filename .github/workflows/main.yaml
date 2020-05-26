@@ -43,8 +43,7 @@ jobs:
       - name: "Install hudo"
         shell: bash
         run: |
-          sudo apt-get install wget -y
-          wget -o /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
+          wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
           sudo dpkg -i /tmp/hugo.deb
           
       - name: "Build static pages"
