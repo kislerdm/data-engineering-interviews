@@ -39,6 +39,7 @@ jobs:
           rm -rf .git/worktrees/public
           git worktree add -B gh-pages website/public
           rm -rf website/public/*
+          rm -rf website/public/{.github,.gitignore,.gitmodules,.env}
 
       - name: "Install hudo"
         shell: bash
@@ -65,5 +66,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-          directory: website/public
+          directory: ./website/public
           force: true
