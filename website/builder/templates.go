@@ -8,7 +8,7 @@ import (
 func levelMap(level int) string {
 	switch lvl := level; lvl {
 	case 2:
-		return `‍⭐️`
+		return `⭐️`
 	case 3:
 		return `🚀`
 	default:
