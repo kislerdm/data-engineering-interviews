@@ -37,15 +37,13 @@ jobs:
           mkdir website/public
           git worktree prune
           rm -rf .git/worktrees/public
-          echo "Checking out gh-pages branch into public"
           git worktree add -B gh-pages website/public
+          rm -rf website/public/*
 
       - name: "Install hudo"
         shell: bash
         run: |
-          sudo apt-get update -y
-          sudo apt-get install wget -y
-          wget -O /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
+          curl -o /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_0.71.1_Linux-64bit.deb"
           sudo dpkg -i /tmp/hugo.deb
           
       - name: "Build static pages"
@@ -59,6 +57,8 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           cd website/public
+          git checkout --orphan gh-pages
+          git reset --hard
           git add --all
           git commit -m "Publish to gh-pages"
 
