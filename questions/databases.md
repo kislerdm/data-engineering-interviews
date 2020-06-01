@@ -2,13 +2,13 @@
 
 <!-- content -->
 
-### Name types of join methods RDBMS (e.g. postres) supports? (https://severalnines.com/database-blog/overview-join-methods-postgresql) 🚀
+### Name types of join methods RDBMS (e.g. postres) supports? 🚀
 
 TBD
 
 ***References***:
 
-- link1
+- https://severalnines.com/database-blog/overview-join-methods-postgresql
 
 ### What is 'nested loops join'? 👶
 
