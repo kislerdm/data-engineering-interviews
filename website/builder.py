@@ -29,7 +29,7 @@ PATH_COC = os.getenv("PATH_COC",
 
 CONFIG = {
     "question": {
-        "weight": 2,
+        "weight": 1,
         "prefix": """{{<panel title="Warning" style="warning" >}}
 The answers here are given by the community. Be careful and double check the answers before using them. If you see an error, please create a PR with a fix.
 {{< button style="outline-success" link="https://github.com/kislerdm/data-engineering-interviews/edit/master/questions/<<category>>.md" >}} Edit questions {{< /button >}}
@@ -53,8 +53,43 @@ The answers here are given by the community. Be careful and double check the ans
         "title": "Home",
     },
     "coc": {
-        "weight": 3,
+        "weight": 10,
         "title": "Code of conduct",
+    },
+    "contributors": {
+        "weight": 3,
+        "title": "Contributors list",
+        "prefix": """
+<div id="contributorsList"></div>
+<script type="text/javascript">
+  const apiUrl = 'https://api.github.com/repos/kislerdm/data-engineering-interviews/contributors?anon=1';
+
+  (() => {
+    let ul = document.createElement('ul');
+
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(data => {
+        contributorsList = data.map(el => `<a href="${el.html_url}" target="_blank">${el.login}</a>`);
+        contributorsList.forEach(renderProductList);
+      })
+      .catch(err => {
+        console.error(`Error fetching from ${apiUrl}: ${err}`)
+      });
+
+    function renderProductList(element, index, arr) {
+      let li = document.createElement('li');
+      li.setAttribute('class', 'item');
+      ul.appendChild(li);
+      li.innerHTML += element;
+    };
+
+    document.getElementById('contributorsList').appendChild(ul);
+  })();
+</script>
+
+##### Thank you for contributing to the project!
+""",
     }
 }
 
@@ -118,7 +153,7 @@ def ls(path: str,
         elif p.endswith(file_extention):
             output.append(path_inner)
     return output
-    
+
 
 def read(path: str) -> str:
     """Function to read a md file.
@@ -169,11 +204,11 @@ def mkdir(path: Union[str, pathlib.PosixPath]) -> None:
 def ln(source: str,
        destination: str) -> None:
     """Function to bulk symblink content of one dir to another dir.
-    
+
     Args:
       source: Source dir.
       dist: Destination dir.
-    
+
     Raises:  
       PermissionError: Happened on permission denied.
       IOError: Happened when i/o error occurred.
@@ -187,7 +222,7 @@ def ln(source: str,
         raise PermissionError(f"[line {get_line()}] {ex}")
     except IOError as ex:
         raise IOError(f"[line {get_line()}] {ex}")
-    
+
 
 def write(path: str, obj: str) -> None:
     """Function to write a md file.
@@ -252,10 +287,10 @@ draft: false
 
 def get_stats(content: str) -> int:
     """Function to count number of questions.
-    
+
     Args:
       content: Page content.
-    
+
     Returns:
       Count of questions on the page.
     """
@@ -264,10 +299,10 @@ def get_stats(content: str) -> int:
 
 def generate_stats_table(stats: dict) -> str:
     """Function to generate md table with questions stats.
-    
+
     Args:
       stats: Stats dict. 
-      
+
             {
                 "category": {
                     "title" str,
@@ -279,72 +314,84 @@ def generate_stats_table(stats: dict) -> str:
       Md table string.
     """
     cnt_total = sum([v['cnt'] for v in stats.values()])
-    
+
     header = f"""## Questions categories
     
 *Total number of questions as of {time.strftime('%Y-%m-%d', time.gmtime())}*: **{cnt_total}**
 """
-    
+
     table_body = "\n".join([f"|[{v['title']}](questions/{k}/)|{v['cnt']}|"
                             for k, v in stats.items()])
     return f"""{header}\n
 |Category|Number of questions|
 |:-:|-:|
 {table_body}"""
-    
+
 
 def main() -> None:
     logs = getLogger()
 
     stats_questions = {}
-    
+
     # generate questions pages
     path_questions = ls(DIR_SOURCE_QUESTIONS)
-    
+
     for path in path_questions:
         category = path.split('/')[-1].split('.')[0]
         category_title = category.replace("-", " ").capitalize()
-        
+
         try:
             content_input = read(path)
         except Exception as ex:
             logs.send(f"Reading error for {category}: {ex}")
-        
-        try:            
+
+        try:
             content_page = generate_page(
                 config={
                     **CONFIG['question'],
                     "title": category_title,
                 },
                 content_input=content_input)
-            
+
             content_page = content_page.replace("<<category>>", category)
         except Exception as ex:
             logs.send(f"Content generating error for {category}: {ex}")
-        
+
         try:
             write(f"{DIR_SITE_CONTENT}/questions/{category}.md", content_page)
         except Exception as ex:
             logs.send(f"Writing error for {category}: {ex}")
-        
+
         stats_questions[category] = {
             "cnt": get_stats(content_page),
             "title": category_title,
-        }                                  
+        }
 
     # generate questions_categories page
-    content_input = "\n".join([f"- [{v['title']}]({k}) (**{v['cnt']}** questions)\n" 
+    content_input = "\n".join([f"- [{v['title']}]({k}) (**{v['cnt']}** questions)\n"
                                for k, v in stats_questions.items()])
-    
+
     content_input = f"{CONTENT_TAG}\n{content_input}"
-    
-    content_page = generate_page(config=CONFIG['questions_categories'], 
+
+    content_page = generate_page(config=CONFIG['questions_categories'],
                                  content_input=content_input)
-    
+
     try:
         write(f"{DIR_SITE_CONTENT}/questions/_index.md", content_page)
     except Exception as ex:
         logs.send(f"Writing error for questions categories page: {ex}")
+
+    # generate contributors list page
+    try:
+        content_page = generate_page(config=CONFIG['contributors'],
+                                     content_input="")
+    except Exception as ex:
+        logs.send(f"Contributors list generating error: {ex}")
+    
+    try:
+        write(f"{DIR_SITE_CONTENT}/contributors-list/_index.md", content_page)
+    except Exception as ex:
+        logs.send(f"Writing error for contributors list page: {ex}")
     
     # generate LP
     try:
@@ -357,29 +404,32 @@ def main() -> None:
                                      content_input=content_input)
     except Exception as ex:
         logs.send(f"Home page generating error: {ex}")
-    
+
     # add stats
     try:
         stats = generate_stats_table(stats_questions)
-    
-        content_page = content_page.replace("Find full list of questions [here](https://www.data-engineering-interviews.org/questions/)", 
+
+        content_page = content_page.replace("Find full list of questions [here](https://www.data-engineering-interviews.org/questions/)",
                                             stats)
     except Exception as ex:
         logs.send(f"Cannot add stats to home page: {ex}", kill=False)
-    
+
     content_page = content_page.replace("CODE-OF-CONDUCT.md",
-                                        "code-of-conduct")
+                                        "/code-of-conduct/")\
+                               .replace("https://github.com/kislerdm/data-engineering-interviews/contributors",
+                                        "/contributors-list/")
+    
     try:
         write(f"{DIR_SITE_CONTENT}/_index.md", content_page)
     except Exception as ex:
         logs.send(f"Writing error for home page: {ex}")
-    
+
     # generate code of conduct page
     try:
         content_input = read(PATH_COC)
     except Exception as ex:
         logs.send(f"CoC reading error: {ex}")
-    
+
     try:
         content_page = generate_page(config=CONFIG['coc'],
                                      content_input=content_input)
@@ -389,12 +439,13 @@ def main() -> None:
         write(f"{DIR_SITE_CONTENT}/code-of-conduct/_index.md", content_page)
     except Exception as ex:
         logs.send(f"Writing error for CoC page: {ex}")
-        
+
     # link images
     try:
         ln(DIR_SOURCE_IMG, DIR_DESTINATION_IMG)
     except Exception as ex:
         logs.send(f"Images copy error: {ex}")
+    
 
 
 if __name__ == "__main__":
