@@ -238,6 +238,7 @@ def generate_page(config: dict,
     output = f"""---
 title: {config['title']}
 weight: {config['weight']}
+draft: false
 ---\n
 """
 
