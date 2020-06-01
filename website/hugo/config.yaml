@@ -3,6 +3,8 @@ languageCode: "en-us"
 DefaultContentLanguage: "en"
 title: "Data Engineering Interviews"
 
+author: "Dmitry Kisler"
+
 contentDir: ./../content
 staticDir: ./../static
 publishDir: ./../public
@@ -26,6 +28,9 @@ params:
   disableReadmoreNav: true # set true to hide prev/next navigation, default is false
   highlightClientSide: false # set true to use highlight.pack.js instead of the default hugo chroma highlighter
   menushortcutsnewtab: true # set true to open shortcuts links to a new tab/window
+  favicon:
+    enable: true
+    path: "/img/favicon.ico"
 
 markup:
   goldmark:
