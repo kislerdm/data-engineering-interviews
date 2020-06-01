@@ -3,9 +3,8 @@
 
 import os
 import sys
-from typing import List
 import pathlib
-from typing import Union
+from typing import List, Union
 import time
 import re
 import logging
@@ -439,7 +438,6 @@ def main() -> None:
         ln(DIR_SOURCE_IMG, DIR_DESTINATION_IMG)
     except Exception as ex:
         logs.send(f"Images copy error: {ex}")
-    
 
 
 if __name__ == "__main__":
