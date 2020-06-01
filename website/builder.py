@@ -20,22 +20,23 @@ DIR_SITE_CONTENT = os.getenv("DIR_SITE_CONTENT",
                              f"{DIR_BASE}/website/content")
 DIR_SOURCE_IMG = os.getenv("DIR_SOURCE_IMG",
                            f"{DIR_BASE}/img")
-DIR_DESTINATION_IMG = os.getenv("DIR_SOURCE_IMG",
+DIR_DESTINATION_IMG = os.getenv("DIR_DESTINATION_IMG",
                                 f"{DIR_BASE}/website/static/img")
-PATH_COC = os.getenv("PATH_COC",
-                     f"{DIR_BASE}/CODE-OF-CONDUCT.md")
 PATH_README = os.getenv("PATH_README",
                         f"{DIR_BASE}/README.md")
+PATH_COC = os.getenv("PATH_COC",
+                     f"{DIR_BASE}/CODE-OF-CONDUCT.md")
 
 CONFIG = {
     "question": {
         "weight": 2,
         "prefix": """{{<panel title="Warning" style="warning" >}}
 The answers here are given by the community. Be careful and double check the answers before using them. If you see an error, please create a PR with a fix.
+{{< button style="outline-success" link="https://github.com/kislerdm/data-engineering-interviews/edit/master/questions/<<category>>.md" >}} Edit questions {{< /button >}}
 {{</panel >}}
 
 {{<panel title="Legend" style="success" >}}
-👶 easy ‍⭐️ medium 🚀 expert
+👶 easy ‍⭐ medium 🚀 expert
 {{</panel>}}
 """,
     },
@@ -117,7 +118,7 @@ def ls(path: str,
         elif p.endswith(file_extention):
             output.append(path_inner)
     return output
-
+    
 
 def read(path: str) -> str:
     """Function to read a md file.
@@ -164,6 +165,29 @@ def mkdir(path: Union[str, pathlib.PosixPath]) -> None:
     except PermissionError as ex:
         raise PermissionError(f"[line {get_line()}] {ex}")
 
+
+def ln(source: str,
+       destination: str) -> None:
+    """Function to bulk symblink content of one dir to another dir.
+    
+    Args:
+      source: Source dir.
+      dist: Destination dir.
+    
+    Raises:  
+      PermissionError: Happened on permission denied.
+      IOError: Happened when i/o error occurred.
+    """
+    try:
+        for obj in ls(source):
+            dest_obj = obj.replace(source, destination)
+            mkdir(pathlib.Path(dest_obj).parent)
+            os.system(f"ln -sf {obj} {dest_obj}")
+    except PermissionError as ex:
+        raise PermissionError(f"[line {get_line()}] {ex}")
+    except IOError as ex:
+        raise IOError(f"[line {get_line()}] {ex}")
+    
 
 def write(path: str, obj: str) -> None:
     """Function to write a md file.
@@ -260,7 +284,7 @@ def generate_stats_table(stats: dict) -> str:
 *Total number of questions as of {time.strftime('%Y-%m-%d', time.gmtime())}*: **{cnt_total}**
 """
     
-    table_body = "\n".join([f"|[{v['title']}]({k})|{v['cnt']}|"
+    table_body = "\n".join([f"|[{v['title']}](questions/{k}/)|{v['cnt']}|"
                             for k, v in stats.items()])
     return f"""{header}\n
 |Category|Number of questions|
@@ -280,16 +304,27 @@ def main() -> None:
         category = path.split('/')[-1].split('.')[0]
         category_title = category.replace("-", " ").capitalize()
         
-        content_input = read(path)
-
-        content_page = generate_page(
-            config={
-                **CONFIG['question'],
-                "title": category_title,
-            },
-            content_input=content_input)
-
-        write(f"{DIR_SITE_CONTENT}/questions/{category}.md", content_page)
+        try:
+            content_input = read(path)
+        except Exception as ex:
+            logs.send(f"Reading error for {category}: {ex}")
+        
+        try:            
+            content_page = generate_page(
+                config={
+                    **CONFIG['question'],
+                    "title": category_title,
+                },
+                content_input=content_input)
+            
+            content_page = content_page.replace("<<category>>", category)
+        except Exception as ex:
+            logs.send(f"Content generating error for {category}: {ex}")
+        
+        try:
+            write(f"{DIR_SITE_CONTENT}/questions/{category}.md", content_page)
+        except Exception as ex:
+            logs.send(f"Writing error for {category}: {ex}")
         
         stats_questions[category] = {
             "cnt": get_stats(content_page),
@@ -305,32 +340,60 @@ def main() -> None:
     content_page = generate_page(config=CONFIG['questions_categories'], 
                                  content_input=content_input)
     
-    write(f"{DIR_SITE_CONTENT}/questions/_index.md", content_page)
+    try:
+        write(f"{DIR_SITE_CONTENT}/questions/_index.md", content_page)
+    except Exception as ex:
+        logs.send(f"Writing error for questions categories page: {ex}")
     
     # generate LP
-    content_input = read(PATH_README)
+    try:
+        content_input = read(PATH_README)
+    except Exception as ex:
+        logs.send(f"README.md reading error: {ex}")
 
-    content_page = generate_page(config=CONFIG['home'],
-                                 content_input=content_input)
+    try:
+        content_page = generate_page(config=CONFIG['home'],
+                                     content_input=content_input)
+    except Exception as ex:
+        logs.send(f"Home page generating error: {ex}")
     
-    # add stats    
-    stats = generate_stats_table(stats_questions)
+    # add stats
+    try:
+        stats = generate_stats_table(stats_questions)
     
-    # adjust the page content
+        content_page = content_page.replace("Find full list of questions [here](https://www.data-engineering-interviews.org/questions/)", 
+                                            stats)
+    except Exception as ex:
+        logs.send(f"Cannot add stats to home page: {ex}", kill=False)
+    
     content_page = content_page.replace("CODE-OF-CONDUCT.md",
-                                        "code-of-conduct")\
-                               .replace("Find full list of questions [here](https://www.data-engineering-interviews.org/questions/)", 
-                                        stats)
-    
-    write(f"{DIR_SITE_CONTENT}/_index.md", content_page)
+                                        "code-of-conduct")
+    try:
+        write(f"{DIR_SITE_CONTENT}/_index.md", content_page)
+    except Exception as ex:
+        logs.send(f"Writing error for home page: {ex}")
     
     # generate code of conduct page
-    content_input = read(PATH_COC)
-
-    content_page = generate_page(config=CONFIG['coc'],
-                                 content_input=content_input)
+    try:
+        content_input = read(PATH_COC)
+    except Exception as ex:
+        logs.send(f"CoC reading error: {ex}")
     
-    write(f"{DIR_SITE_CONTENT}/code-of-conduct/_index.md", content_page)
+    try:
+        content_page = generate_page(config=CONFIG['coc'],
+                                     content_input=content_input)
+    except Exception as ex:
+        logs.send(f"CoC generating error: {ex}")
+    try:
+        write(f"{DIR_SITE_CONTENT}/code-of-conduct/_index.md", content_page)
+    except Exception as ex:
+        logs.send(f"Writing error for CoC page: {ex}")
+        
+    # link images
+    try:
+        ln(DIR_SOURCE_IMG, DIR_DESTINATION_IMG)
+    except Exception as ex:
+        logs.send(f"Images copy error: {ex}")
 
 
 if __name__ == "__main__":
