@@ -1,9 +1,0 @@
-version: "3.7"
-services:
-  builder:
-    image: web-builder:1
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - "${PWD}/../../:/build"
