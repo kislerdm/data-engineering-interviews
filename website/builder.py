@@ -59,14 +59,11 @@ The answers here are given by the community. Be careful and double check the ans
     "contributors": {
         "weight": 3,
         "title": "Contributors list",
-        "prefix": """
-<div id="contributorsList"></div>
+        "prefix": """<div id="contributorsList"></div>
 <script type="text/javascript">
   const apiUrl = 'https://api.github.com/repos/kislerdm/data-engineering-interviews/contributors?anon=1';
-
   (() => {
     let ul = document.createElement('ul');
-
     fetch(apiUrl)
       .then(res => res.json())
       .then(data => {
@@ -76,20 +73,17 @@ The answers here are given by the community. Be careful and double check the ans
       .catch(err => {
         console.error(`Error fetching from ${apiUrl}: ${err}`)
       });
-
     function renderProductList(element, index, arr) {
       let li = document.createElement('li');
       li.setAttribute('class', 'item');
       ul.appendChild(li);
       li.innerHTML += element;
     };
-
     document.getElementById('contributorsList').appendChild(ul);
   })();
 </script>
 
-##### Thank you for contributing to the project!
-""",
+##### Thank you for contributing to the project!""",
     }
 }
 
