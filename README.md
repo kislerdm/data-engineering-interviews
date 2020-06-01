@@ -6,7 +6,7 @@
 
 Data engineering related Q&A for *data community* by *data community*. 
 
-Find full list of questions [here](https://www.data-engineering-interviews.org/questions/)
+Find full list of questions <a href="https://www.data-engineering-interviews.org/questions/" target="_blank">here</a>.
 
 ## Contribution
 

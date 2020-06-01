@@ -402,7 +402,7 @@ def main() -> None:
     try:
         stats = generate_stats_table(stats_questions)
 
-        content_page = content_page.replace("Find full list of questions [here](https://www.data-engineering-interviews.org/questions/)",
+        content_page = content_page.replace("""Find full list of questions <a href="https://www.data-engineering-interviews.org/questions/" target="_blank">here</a>.""",
                                             stats)
     except Exception as ex:
         logs.send(f"Cannot add stats to home page: {ex}", kill=False)
