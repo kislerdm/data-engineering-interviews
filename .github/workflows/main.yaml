@@ -5,7 +5,7 @@ on:
     branches:
         - master
     paths:
-      - questions/**/*.yaml
+      - questions/*.md
       - img/**
   
   watch:
@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           source .env
-          ./build.run
+          python3.7 website/builder.py
         
       - name: "Prepare gh-pages branch"
         shell: bash
