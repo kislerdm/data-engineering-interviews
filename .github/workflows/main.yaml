@@ -2,12 +2,14 @@ name: deploy website
 
 on: 
   pull_request:
+    types:
+      - closed
     branches:
         - master
     paths:
       - questions/*.md
-      - img/**
-  
+      - img/**  
+
   watch:
     types: [started]
   
