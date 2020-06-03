@@ -17,6 +17,8 @@ DIR_SOURCE_QUESTIONS = os.getenv("DIR_SOURCE_QUESTIONS",
                                  f"{DIR_BASE}/questions")
 DIR_SITE_CONTENT = os.getenv("DIR_SITE_CONTENT",
                              f"{DIR_BASE}/website/content")
+DIR_SOURCE_CONTENT = os.getenv("DIR_SOURCE_CONTENT",
+                               f"{DIR_BASE}/website/content-fixed")
 DIR_SOURCE_IMG = os.getenv("DIR_SOURCE_IMG",
                            f"{DIR_BASE}/img")
 DIR_DESTINATION_IMG = os.getenv("DIR_DESTINATION_IMG",
@@ -55,35 +57,6 @@ The answers here are given by the community. Be careful and double check the ans
         "weight": 10,
         "title": "Code of conduct",
     },
-    "contributors": {
-        "weight": 3,
-        "title": "Contributors list",
-        "prefix": """<div id="contributorsList"></div>
-<script type="text/javascript">
-  const apiUrl = 'https://api.github.com/repos/kislerdm/data-engineering-interviews/contributors?anon=1';
-  (() => {
-    let ul = document.createElement('ul');
-    fetch(apiUrl)
-      .then(res => res.json())
-      .then(data => {
-        contributorsList = data.map(el => `<a href="${el.html_url}" target="_blank">${el.login}</a>`);
-        contributorsList.forEach(renderProductList);
-      })
-      .catch(err => {
-        console.error(`Error fetching from ${apiUrl}: ${err}`)
-      });
-    function renderProductList(element, index, arr) {
-      let li = document.createElement('li');
-      li.setAttribute('class', 'item');
-      ul.appendChild(li);
-      li.innerHTML += element;
-    };
-    document.getElementById('contributorsList').appendChild(ul);
-  })();
-</script>
-
-##### Thank you for contributing to the project!""",
-    }
 }
 
 CONTENT_TAG = "<!-- content -->"
@@ -373,18 +346,6 @@ def main() -> None:
         write(f"{DIR_SITE_CONTENT}/questions/_index.md", content_page)
     except Exception as ex:
         logs.send(f"Writing error for questions categories page: {ex}")
-
-    # generate contributors list page
-    try:
-        content_page = generate_page(config=CONFIG['contributors'],
-                                     content_input="")
-    except Exception as ex:
-        logs.send(f"Contributors list generating error: {ex}")
-    
-    try:
-        write(f"{DIR_SITE_CONTENT}/contributors-list/_index.md", content_page)
-    except Exception as ex:
-        logs.send(f"Writing error for contributors list page: {ex}")
     
     # generate LP
     try:
@@ -438,6 +399,12 @@ def main() -> None:
         ln(DIR_SOURCE_IMG, DIR_DESTINATION_IMG)
     except Exception as ex:
         logs.send(f"Images copy error: {ex}")
+    
+    # link fixed predefined pages
+    try:
+        ln(DIR_SOURCE_CONTENT, DIR_SITE_CONTENT)
+    except Exception as ex:
+        logs.send(f"Predefined pages copy error: {ex}")
 
 
 if __name__ == "__main__":
