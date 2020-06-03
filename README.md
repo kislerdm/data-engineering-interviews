@@ -8,7 +8,7 @@
 	<a href="https://www.data-engineering-interviews.org/" target="_blank">
 		<img src="/img/home-image.png"
 			 alt="data-engineering-interviews.org"
-			 style="width: 40%;"
+			 style="width: 70%;"
 		>
 	</a>
 </p>
