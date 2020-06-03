@@ -4,6 +4,15 @@
 
 <!-- content -->
 
+<p style="text-align: center;">
+	<a href="https://www.data-engineering-interviews.org/" target="_blank">
+		<img src="/img/home-image.png"
+			 alt="data-engineering-interviews.org"
+			 style="width: 40%;"
+		>
+	</a>
+</p>
+
 Data engineering related Q&A for *data community* by *data community*. 
 
 Find full list of questions <a href="https://www.data-engineering-interviews.org/questions/" target="_blank">here</a>.
