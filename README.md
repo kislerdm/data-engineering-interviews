@@ -13,7 +13,7 @@
 	</a>
 </p>
 
-Data engineering related Q&A for *data community* by *data community*. *The open source community driven knowledge sharing project* which objectives to
+*The open source community driven knowledge sharing project* which objectives to
 
 - highlight main topics data engineers are dealing with on daily basis
 - simplify knowledge sharing and knowledge discovery for data professionals
