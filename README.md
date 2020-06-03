@@ -16,11 +16,8 @@
 Data engineering related Q&A for *data community* by *data community*. *The open source community driven knowledge sharing project* which objectives to
 
 - highlight main topics data engineers are dealing with on daily basis
-
 - simplify knowledge sharing and knowledge discovery for data professionals
-
 - facilitate interview preparation for data professionals
-
 - help aspiring data engineers and scientists to break into industry
 
 Find full list of questions <a href="https://www.data-engineering-interviews.org/questions/" target="_blank">here</a>.
