@@ -52,6 +52,7 @@ The answers here are given by the community. Be careful and double check the ans
     "home": {
         "weight": 1,
         "title": "Home",
+        "prefix": """<img src="https://img.shields.io/badge/dynamic/json?label=24h%20visitors&style=social&color=green&query=cnt&url=https%3A%2F%2Fdata-engineering-interviews-stats.dkisler.workers.dev%2F%3Fq%3D1440&cacheSeconds=1800">"""
     },
     "coc": {
         "weight": 10,
