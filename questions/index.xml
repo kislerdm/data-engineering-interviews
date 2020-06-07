@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Questions categories on Data Engineering Interviews</title>
+    <link>https://data-engineering-interviews.org/questions/</link>
+    <description>Recent content in Questions categories on Data Engineering Interviews</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="https://data-engineering-interviews.org/questions/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Databases</title>
+      <link>https://data-engineering-interviews.org/questions/databases/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://data-engineering-interviews.org/questions/databases/</guid>
+      <description>Warning  The answers here are given by the community. Be careful and double check the answers before using them. If you see an error, please create a PR with a fix.
+Edit questions     Legend  👶 easy ‍⭐ medium 🚀 expert    Name types of join methods RDBMS (e.g. postres) supports? ‍⭐️ As of today, postgres supports three join methods:
+ nested loops hash join merge join  TBD</description>
+    </item>
+    
+    <item>
+      <title>Distributed computing</title>
+      <link>https://data-engineering-interviews.org/questions/distributed-computing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://data-engineering-interviews.org/questions/distributed-computing/</guid>
+      <description>Warning  The answers here are given by the community. Be careful and double check the answers before using them. If you see an error, please create a PR with a fix.
+Edit questions     Legend  👶 easy ‍⭐ medium 🚀 expert    What is Apache Hive Metastore? 👶 Metastore is a Hive serivce to store Hive tables and partitions metadata in any JDBC compliant relational database.</description>
+    </item>
+    
+    <item>
+      <title>Infrastructure and os</title>
+      <link>https://data-engineering-interviews.org/questions/infrastructure-and-os/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://data-engineering-interviews.org/questions/infrastructure-and-os/</guid>
+      <description>Warning  The answers here are given by the community. Be careful and double check the answers before using them. If you see an error, please create a PR with a fix.
+Edit questions     Legend  👶 easy ‍⭐ medium 🚀 expert    What is default gateway? ⭐ TBD
+References:
+  link1
+  link2
+  Imagine you upload a file to s3 bucket and receive 503 http error.</description>
+    </item>
+    
+    <item>
+      <title>Message broker</title>
+      <link>https://data-engineering-interviews.org/questions/message-broker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://data-engineering-interviews.org/questions/message-broker/</guid>
+      <description>Warning  The answers here are given by the community. Be careful and double check the answers before using them. If you see an error, please create a PR with a fix.
+Edit questions     Legend  👶 easy ‍⭐ medium 🚀 expert    What is Quality of Service? 👶 The Quality of Service (QoS) level is a sender-receiver agreement to define the guarantee of a message delivery.</description>
+    </item>
+    
+    <item>
+      <title>Programming</title>
+      <link>https://data-engineering-interviews.org/questions/programming/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://data-engineering-interviews.org/questions/programming/</guid>
+      <description>Warning  The answers here are given by the community. Be careful and double check the answers before using them. If you see an error, please create a PR with a fix.
+Edit questions     Legend  👶 easy ‍⭐ medium 🚀 expert    What is one-liner? Give example in python. 👶 TBD
+References:
+  link1
+  link2
+  What does object mutability mean?</description>
+    </item>
+    
+  </channel>
+</rss>

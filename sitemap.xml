@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/questions/databases/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/questions/distributed-computing/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/questions/infrastructure-and-os/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/questions/message-broker/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/questions/programming/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/questions/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/contributors-list/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/code-of-conduct/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/our-partners/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>https://data-engineering-interviews.org/tags/</loc>
+  </url>
+  
+</urlset>
